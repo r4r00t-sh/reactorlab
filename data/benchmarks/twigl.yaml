@@ -1,0 +1,33 @@
+# TWIGL 2D static eigenvalue (seed / blanket)
+# Source: Hageman & Yasinsky TWIGL; XS as tabulated in standard V&V suites
+# (e.g. Seamplex SP-MI-17-96D3; OFELIA TWIGL tutorial). Reference k_eff=0.91321.
+# Lengths cm; macroscopic XS cm^-1; D cm.
+name: TWIGL
+dimension: 2
+# Quarter-core model of the 80×80 cm problem: reflective on x=0,y=0; zero-flux on outer.
+Lx_cm: 80.0
+Ly_cm: 80.0
+boundary: mixed_reflective_zero
+reference_keff: 0.91321
+reference_note: >
+  Published static k_eff = 0.91321 (zero-flux outer / reflective symmetry).
+  OFELIA reports 0.91322 (~1 pcm). See docs/vv/diffusion-phase3.md.
+
+materials:
+  # Regions 1 and 2 share static XS; region 3 is blanket.
+  seed:
+    D: [1.4, 0.4]
+    Sigma_a: [0.01, 0.15]
+    nuSigma_f: [0.007, 0.2]
+    Sigma_s12: 0.01
+  blanket:
+    D: [1.3, 0.5]
+    Sigma_a: [0.008, 0.05]
+    nuSigma_f: [0.003, 0.06]
+    Sigma_s12: 0.01
+
+# Material map (quarter): 24|32|24 cm banding — ids 1=seed (reg1), 2=seed (reg2), 3=blanket
+# Cell (x,y) with x,y in [0,80):
+#   if x<24 and y<24 → 1
+#   elif (x<56 and y<24) or (x<24 and y<56) → 2
+#   else → 3

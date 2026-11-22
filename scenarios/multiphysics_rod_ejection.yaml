@@ -1,0 +1,12 @@
+# Educational multiphysics rod ejection (delayed supercritical).
+# Units: SI. Not for design or operations.
+name: multiphysics_rod_ejection
+module: multiphysics
+description: Withdraw rods z0→0; ρ ≈ rod_worth·z0 < β
+drivers:
+  type: rod_ejection
+  t_eject: 1.0
+  z0: 0.08
+  duration: 0.2
+t_end: 20.0
+dt: 0.1

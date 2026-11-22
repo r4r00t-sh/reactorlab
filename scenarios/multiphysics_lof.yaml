@@ -1,0 +1,10 @@
+name: multiphysics_lof
+module: multiphysics
+description: Mass-flow ramp-down; outlet temperature rises
+drivers:
+  type: loss_of_flow
+  t_start: 2.0
+  fraction: 0.4
+  ramp: 5.0
+t_end: 30.0
+dt: 0.25

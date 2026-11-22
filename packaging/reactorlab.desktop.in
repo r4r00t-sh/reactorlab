@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=ReactorLab
+GenericName=Educational reactor simulation
+Comment=Educational nuclear reactor simulation (not safety-grade)
+Exec=reactorlab_gui
+Icon=reactorlab
+Terminal=false
+Categories=Education;Science;Physics;
+Keywords=reactor;nuclear;kinetics;montecarlo;

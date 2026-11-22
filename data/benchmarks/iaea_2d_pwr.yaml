@@ -1,0 +1,64 @@
+# IAEA 2D PWR benchmark (quarter core)
+# Source: Argonne Code Center, Benchmark Problem Book (ANL-7416) /
+# IAEA 2-D PWR benchmark problem as reproduced in OECD/NEA and textbook V&V.
+# Lengths cm; XS cm^-1; D cm.
+name: IAEA_2D_PWR
+dimension: 2
+# Full core 340 cm; we model quarter core with reflective BC on x=0,y=0
+# and zero-flux on outer — here: quarter domain 170 x 170 cm, reflective
+# implemented via mirrored FD (Neumann) on west/south, zero-flux east/north.
+Lx_cm: 170.0
+Ly_cm: 170.0
+boundary: mixed_reflective_zero
+reference_keff: 1.029585
+reference_note: >
+  Classic fine-mesh reference k_eff = 1.029585 for the IAEA 2D PWR benchmark
+  (Argonne Benchmark Problem Book / IAEA). Coarse meshes under-predict slightly.
+
+materials:
+  # Region numbers follow common IAEA numbering (fuel1, fuel2, fuel+rod, reflector)
+  fuel1:
+    D: [1.5, 0.4]
+    Sigma_a: [0.01, 0.085]
+    nuSigma_f: [0.0, 0.135]
+    Sigma_s12: 0.02
+  fuel2:
+    D: [1.5, 0.4]
+    Sigma_a: [0.01, 0.080]
+    nuSigma_f: [0.0, 0.135]
+    Sigma_s12: 0.02
+  fuel_rod:
+    D: [1.5, 0.4]
+    Sigma_a: [0.01, 0.130]
+    nuSigma_f: [0.0, 0.135]
+    Sigma_s12: 0.02
+  reflector:
+    D: [2.0, 0.3]
+    Sigma_a: [0.0, 0.01]
+    nuSigma_f: [0.0, 0.0]
+    Sigma_s12: 0.04
+
+# Assembly pitch 10 cm; map is 17x17 assemblies for quarter core (simplified
+# Cartesian layout matching the classic IAEA checker / ring pattern at 10 cm).
+assembly_pitch_cm: 10.0
+# Material id grid (row = y from bottom, col = x from left). Encoding:
+# 1=fuel1, 2=fuel2, 3=fuel_rod, 4=reflector
+# This is the standard IAEA 2D PWR quarter-core map (17×17 of 10 cm assemblies).
+assembly_map: |
+  2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 4
+  2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 4
+  2 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 4
+  2 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 4
+  2 1 1 1 1 3 1 1 3 1 1 1 1 1 2 2 4
+  2 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 4
+  2 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 4
+  2 1 1 3 1 1 1 1 1 1 1 3 1 1 2 2 4
+  2 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 4
+  2 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 4
+  2 1 1 1 1 3 1 1 3 1 1 1 1 1 2 2 4
+  2 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 4
+  2 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 4
+  2 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 4
+  2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 4
+  2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 4
+  4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4

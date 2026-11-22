@@ -1,0 +1,9 @@
+name: plant_scram_xe
+module: plant
+description: Full rod insertion after t=1 s; watch Xe peak (accelerated time)
+drivers:
+  type: scram_xe
+rod_z_after: 1.0
+t_insert: 1.0
+t_end: 86400.0
+dt: 3600.0

@@ -1,0 +1,55 @@
+# LRA BWR 2D static eigenvalue (educational static-only use of LRA data)
+# Source: Argonne LRA BWR benchmark (Laboratorio Ricerche Applicata /
+# Argonne National Laboratory 2D BWR kinetics benchmark). Cross sections
+# for the delayed-critical static configuration as tabulated in standard
+# V&V suites (e.g. ANL / OECD documentation of the LRA problem).
+# Phase 3 solves the STATIC eigenvalue only (no kinetics).
+name: LRA
+dimension: 2
+Lx_cm: 165.0
+Ly_cm: 165.0
+boundary: zero_flux
+reference_keff: 0.99636
+reference_note: >
+  Published static k_eff for the LRA BWR delayed-critical configuration
+  (~0.99636). Coarse mesh will deviate; see docs/vv/diffusion-phase3.md.
+
+materials:
+  fuel1:
+    D: [1.255, 0.211]
+    Sigma_a: [0.008252, 0.1003]
+    nuSigma_f: [0.004602, 0.1091]
+    Sigma_s12: 0.02533
+  fuel2:
+    D: [1.255, 0.211]
+    Sigma_a: [0.008002, 0.07047]
+    nuSigma_f: [0.004609, 0.08675]
+    Sigma_s12: 0.02617
+  fuel_rod:
+    D: [1.255, 0.211]
+    Sigma_a: [0.008002, 0.07047]
+    nuSigma_f: [0.004609, 0.08675]
+    Sigma_s12: 0.02617
+    # rod inserted: add thermal absorption (documented LRA rod worth style)
+    Sigma_a_rod_extra: [0.0, 0.0034]
+  reflector:
+    D: [1.4, 0.4]
+    Sigma_a: [0.001, 0.02]
+    nuSigma_f: [0.0, 0.0]
+    Sigma_s12: 0.04
+
+assembly_pitch_cm: 15.0
+# 11x11 coarse map (simplified Cartesian LRA-like layout for educational solve).
+# 1=fuel1, 2=fuel2, 3=fuel_rod (withdrawn = fuel2 XS), 4=reflector
+assembly_map: |
+  1 1 1 1 1 1 1 1 1 2 4
+  1 1 1 1 1 1 1 1 1 2 4
+  1 1 1 1 1 1 1 1 1 2 4
+  1 1 1 1 1 1 1 1 1 2 4
+  1 1 1 1 3 1 1 1 1 2 4
+  1 1 1 1 1 1 1 1 1 2 4
+  1 1 1 1 1 1 1 1 1 2 4
+  1 1 1 1 1 1 1 1 1 2 4
+  1 1 1 1 1 1 1 1 1 2 4
+  2 2 2 2 2 2 2 2 2 2 4
+  4 4 4 4 4 4 4 4 4 4 4

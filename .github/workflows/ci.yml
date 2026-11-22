@@ -1,0 +1,100 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-test:
+    name: build-test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install system packages
+        run: |
+          sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
+            build-essential ninja-build cmake pkg-config \
+            clang-format \
+            python3-dev python3-pip python3-venv \
+            libgl1-mesa-dev \
+            qt6-base-dev qt6-base-dev-tools \
+            libeigen3-dev
+
+      - name: Python venv
+        run: |
+          python3 -m venv .venv
+          .venv/bin/pip install -U pip nanobind pytest ruff
+
+      - name: Configure & build
+        run: |
+          cmake --preset release -DPython_EXECUTABLE=$PWD/.venv/bin/python
+          cmake --build --preset release
+
+      - name: C++ tests
+        run: ctest --preset release --output-on-failure
+
+      - name: Python binding smoke
+        run: |
+          PYTHONPATH=$PWD/build/release/python .venv/bin/pytest python/tests -q
+
+      - name: Ruff
+        run: .venv/bin/ruff check python
+
+      - name: Package DEB/TGZ
+        run: |
+          cmake --build --preset release --target package
+          mkdir -p dist
+          cp -f build/release/reactorlab-*.deb build/release/reactorlab-*.tar.gz dist/ || true
+          ls -la dist || true
+
+      - name: Upload packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: reactorlab-packages
+          path: |
+            dist/*.deb
+            dist/*.tar.gz
+          if-no-files-found: warn
+
+  sanitizers:
+    name: asan-ubsan
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
+            build-essential ninja-build cmake pkg-config g++
+
+      - name: Configure, build, test with sanitizers
+        run: |
+          cmake --preset asan
+          cmake --build --preset asan
+          ctest --preset asan --output-on-failure
+
+  lint-format:
+    name: clang-format-check
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install clang-format
+        run: sudo apt-get update && sudo apt-get install -y clang-format
+      - name: Check formatting
+        run: |
+          mapfile -t files < <(git ls-files '*.cpp' '*.hpp' '*.h' '*.cc' '*.cxx')
+          if ((${#files[@]})); then
+            clang-format --dry-run --Werror "${files[@]}"
+          fi

@@ -1,0 +1,38 @@
+# Build
+/build/
+/out/
+/cmake-build-*/
+compile_commands.json
+
+# Dependencies / local toolchains
+/third_party/Qt/
+/aqtinstall.log
+/vcpkg_installed/
+/.vcpkg-root
+/vcpkg/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+/venv/
+/.venv/
+/dist/
+*.so
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+*.user
+*.autosave
+
+# Coverage / sanitizers
+coverage/
+*.gcda
+*.gcno
+default.profraw

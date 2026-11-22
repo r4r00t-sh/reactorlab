@@ -1,0 +1,9 @@
+name: multiphysics_load_follow
+module: multiphysics
+description: Slow sinusoidal external reactivity
+drivers:
+  type: load_follow
+  period: 100.0
+  amp: 0.0015
+t_end: 200.0
+dt: 1.0

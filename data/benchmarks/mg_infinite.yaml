@@ -1,0 +1,18 @@
+# Infinite homogeneous 2-group medium (analytic k_inf)
+# Educational XS (consistent with Phase 3 homogeneous check style).
+# k_inf = (νΣf1 + νΣf2 * Σs12/Σa2) / Σr1   with χ=(1,0)
+name: MG_INFINITE_2G
+reference_keff: 0.8333333333333334
+reference_note: >
+  Analytic infinite-medium k_inf for D irrelevant; Σa=[0.02,0.08], Σs12=0.04,
+  νΣf=[0,0.10], Σr1=Σa1+Σs12=0.06 → k=(0+0.10*0.04/0.08)/0.06 = 0.8333...
+
+materials:
+  fuel:
+    Sigma_t: [0.06, 0.08]   # Σt1=Σa1+Σs12, Σt2=Σa2 (no upscatter)
+    Sigma_a: [0.02, 0.08]
+    Sigma_s12: 0.04
+    nuSigma_f: [0.0, 0.10]
+    # Within-group scatter: Σs11 = Σt1 - Σa1 - Σs12 = 0 (pure downscatter)
+    Sigma_s11: 0.0
+    Sigma_s22: 0.0

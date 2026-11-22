@@ -1,0 +1,28 @@
+[project]
+name = "reactorlab"
+version = "0.7.0"
+description = "Educational nuclear reactor simulation (Python tools & reference)"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "nanobind>=2.0",
+  "numpy",
+  "scipy",
+  "matplotlib",
+  "pyyaml",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "ruff>=0.9"]
+
+[tool.pytest.ini_options]
+testpaths = ["python/tests"]
+pythonpath = ["python", "build/dev/python", "build/release/python"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+ignore = ["E741", "E501"]

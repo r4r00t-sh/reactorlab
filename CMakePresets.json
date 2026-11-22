@@ -1,0 +1,79 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 25,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "REACTORLAB_FETCH_DEPS": "ON",
+        "REACTORLAB_BUILD_TESTS": "ON",
+        "REACTORLAB_BUILD_BINDINGS": "ON",
+        "REACTORLAB_BUILD_GUI": "ON"
+      }
+    },
+    {
+      "name": "dev",
+      "displayName": "Developer (FetchContent deps)",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "release",
+      "displayName": "Release",
+      "inherits": "base"
+    },
+    {
+      "name": "asan",
+      "displayName": "Address/UB Sanitizers",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "REACTORLAB_ENABLE_SANITIZERS": "ON",
+        "REACTORLAB_BUILD_GUI": "OFF",
+        "REACTORLAB_BUILD_BINDINGS": "OFF"
+      }
+    },
+    {
+      "name": "core-only",
+      "displayName": "Core + tests (no GUI/bindings)",
+      "inherits": "base",
+      "cacheVariables": {
+        "REACTORLAB_BUILD_BINDINGS": "OFF",
+        "REACTORLAB_BUILD_GUI": "OFF"
+      }
+    }
+  ],
+  "buildPresets": [
+    { "name": "dev", "configurePreset": "dev" },
+    { "name": "release", "configurePreset": "release" },
+    { "name": "asan", "configurePreset": "asan" },
+    { "name": "core-only", "configurePreset": "core-only" }
+  ],
+  "testPresets": [
+    {
+      "name": "dev",
+      "configurePreset": "dev",
+      "output": { "outputOnFailure": true }
+    },
+    {
+      "name": "release",
+      "configurePreset": "release",
+      "output": { "outputOnFailure": true }
+    },
+    {
+      "name": "asan",
+      "configurePreset": "asan",
+      "output": { "outputOnFailure": true }
+    }
+  ]
+}

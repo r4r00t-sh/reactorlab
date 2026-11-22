@@ -1,0 +1,9 @@
+nanobind>=2.0
+pytest>=8.0
+ruff>=0.9
+pre-commit>=4.0
+numpy
+scipy
+matplotlib
+pyyaml
+aqtinstall>=3.1
