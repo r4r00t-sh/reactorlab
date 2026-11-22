@@ -1,0 +1,9 @@
+module ReactorLab.Proto
+singleton Theme 1.0 Theme.qml
+KpiCard 1.0 components/KpiCard.qml
+Sparkline 1.0 components/Sparkline.qml
+TrendPanel 1.0 components/TrendPanel.qml
+NavRail 1.0 components/NavRail.qml
+TopBar 1.0 components/TopBar.qml
+TransportBar 1.0 components/TransportBar.qml
+HexPreview 1.0 components/HexPreview.qml

@@ -15,15 +15,17 @@ Professional-grade **educational / research** nuclear reactor simulation for Lin
 | 4 | Monte Carlo transport (MG) | Done |
 | 5 | Coupled multiphysics (Picard + IAPWS Region 1) | Done |
 | 6 | Productization / packaging | Done |
+| UI-0…7 | QML control centre (live plant facade) | Done |
 
 ## Architecture
 
 - **`libreactorlab` (C++20):** physics core — no GUI, no Python includes
 - **Python (nanobind):** scripting, reference implementations, plotting/reporting
-- **Qt 6 Widgets GUI:** visualization and controls only; no physics logic
+- **Qt 6 Quick control centre:** primary interactive shell (thin facade over the core)
+- **Qt 6 Widgets GUI:** legacy dashboard (still built)
 - **Build:** CMake ≥ 3.25, Ninja; deps via vcpkg manifest or FetchContent fallback
 
-Stack decisions: [docs/adr/0001-dependency-and-gui-stack.md](docs/adr/0001-dependency-and-gui-stack.md).
+Stack decisions: [docs/adr/0001-dependency-and-gui-stack.md](docs/adr/0001-dependency-and-gui-stack.md), [docs/adr/0008-qml-control-centre.md](docs/adr/0008-qml-control-centre.md).
 
 ## Quick start (Ubuntu)
 
@@ -47,14 +49,18 @@ ctest --preset dev --output-on-failure
 # Python reference + C++ agreement tests
 PYTHONPATH=python:build/dev/python pytest python/tests -q
 
-# GUI (needs display / Qt)
+# Control centre (QML + live plant ODE) — primary GUI
+cmake --build --preset dev --target reactorlab_control_centre
+./gui/control_centre/run.sh
+
+# Legacy Widgets GUI
 ./build/dev/gui/reactorlab_gui
 
 # Packages (DEB + TGZ → dist/)
 ./scripts/package.sh
 ```
 
-User guide: [docs/user-guide.md](docs/user-guide.md).
+User guide: [docs/user-guide.md](docs/user-guide.md). Control-centre UI notes: [docs/ui/](docs/ui/).
 
 ### Offline / no-sudo Qt
 

@@ -2,7 +2,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Widgets PrintSupport)
+find_package(Qt6 REQUIRED COMPONENTS Widgets PrintSupport Quick QuickControls2 Gui)
 
 qt_standard_project_setup()
 
@@ -58,3 +58,6 @@ install(TARGETS reactorlab_gui
 target_compile_definitions(reactorlab_gui PRIVATE
   REACTORLAB_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
 )
+
+# QML control centre (live engine facade — UI-2+)
+add_subdirectory(control_centre)

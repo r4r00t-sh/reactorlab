@@ -6,12 +6,12 @@ namespace reactorlab {
 
 /// Semantic version of libreactorlab (compile-time).
 inline constexpr int kVersionMajor = 0;
-inline constexpr int kVersionMinor = 7;
+inline constexpr int kVersionMinor = 8;
 inline constexpr int kVersionPatch = 0;
 
-/// Human-readable version string, e.g. "0.7.0".
+/// Human-readable version string, e.g. "0.8.0".
 [[nodiscard]] constexpr std::string_view version_string() noexcept {
-  return "0.7.0";
+  return "0.8.0";
 }
 
 /// Short product disclaimer (not safety-grade). Full text also in README/About.

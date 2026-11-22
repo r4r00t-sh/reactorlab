@@ -2,6 +2,22 @@
 
 All notable changes to ReactorLab will be documented here.
 
+## [0.8.0] — QML control centre (UI-0…UI-7)
+
+### Added
+
+- Qt Quick control centre (`gui/control_centre/`) with live `EngineWorker` / plant ODE facade
+- Design system shell, KPIs, multi-trends, hex core + synced rod banks
+- TWIGL×plant heatmaps, Quick3D cutaway, educational radiation inventory + γ/n dose
+- Process mimic, ackable alarms, plant scenarios, event log, CSV export
+- ADR 0008 (QML control-centre direction) + `docs/ui/` phase plans
+- Core `reactorlab::radiation` educational dose helpers
+
+### Notes
+
+- Widgets GUI remains available; control centre is the primary interactive shell
+- Radiation and spatial maps are educational approximations — not for safety/dose assessment
+
 ## [0.7.0] — Phase 6
 
 ### Added

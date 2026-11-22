@@ -1,0 +1,26 @@
+module ReactorLab.ControlCentre
+singleton Theme 1.0 Theme.qml
+singleton LayoutStore 1.0 LayoutStore.qml
+DemoClock 1.0 DemoClock.qml
+Shell 1.0 Shell.qml
+NavRail 1.0 chrome/NavRail.qml
+TopBar 1.0 chrome/TopBar.qml
+TransportBar 1.0 chrome/TransportBar.qml
+Card 1.0 cards/Card.qml
+KpiCard 1.0 cards/KpiCard.qml
+Sparkline 1.0 cards/Sparkline.qml
+PlaceholderCard 1.0 cards/PlaceholderCard.qml
+MultiTrendPanel 1.0 cards/MultiTrendPanel.qml
+HexCoreMap 1.0 cards/HexCoreMap.qml
+RodBankPanel 1.0 cards/RodBankPanel.qml
+HeatmapPanel 1.0 cards/HeatmapPanel.qml
+Core3DView 1.0 cards/Core3DView.qml
+CardGrid 1.0 layouts/CardGrid.qml
+OverviewLayout 1.0 layouts/OverviewLayout.qml
+OperationsLayout 1.0 layouts/OperationsLayout.qml
+AnalysisLayout 1.0 layouts/AnalysisLayout.qml
+RadiationLayout 1.0 layouts/RadiationLayout.qml
+ThermalLayout 1.0 layouts/ThermalLayout.qml
+ScenariosLayout 1.0 layouts/ScenariosLayout.qml
+AlarmsLayout 1.0 layouts/AlarmsLayout.qml
+LogsLayout 1.0 layouts/LogsLayout.qml
