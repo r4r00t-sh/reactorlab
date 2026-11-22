@@ -64,6 +64,25 @@ Rectangle {
             width: 140
             onMoved: if (clock) clock.speed = value
         }
+
+        CheckBox {
+            text: "FC couple"
+            checked: clock && clock.fuelCycleCoupling ? true : false
+            onToggled: if (clock) clock.fuelCycleCoupling = checked
+            contentItem: Text {
+                text: parent.text
+                color: Theme.textPrimary
+                font.pixelSize: Theme.typeSm
+                leftPadding: parent.indicator.width + 6
+                verticalAlignment: Text.AlignVCenter
+            }
+        }
+        ComboBox {
+            model: ["transient", "depletion"]
+            currentIndex: (clock && clock.timeMode === "depletion") ? 1 : 0
+            width: 110
+            onActivated: if (clock) clock.timeMode = model[currentIndex]
+        }
     }
 
     Rectangle {

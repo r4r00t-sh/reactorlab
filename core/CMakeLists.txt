@@ -11,6 +11,7 @@ add_library(reactorlab_core
   src/io/csv_export.cpp
   src/io/scenario_yaml.cpp
   src/radiation/edu_dose.cpp
+  src/fuelcycle/thorium_chain.cpp
 )
 
 add_library(reactorlab::core ALIAS reactorlab_core)
@@ -52,6 +53,9 @@ if(REACTORLAB_BUILD_TESTS)
     tests/test_multiphysics.cpp
     tests/test_io.cpp
     tests/test_radiation.cpp
+    tests/test_delayed_u233.cpp
+    tests/test_thorium_chain.cpp
+    tests/test_thorium_coupling.cpp
   )
   target_link_libraries(reactorlab_core_tests
     PRIVATE

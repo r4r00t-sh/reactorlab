@@ -1,0 +1,31 @@
+{
+  "library": "ENDF/B-VIII.0",
+  "code": "OpenMC 0.15.3",
+  "geometry": "edu AHWR-style equal-area pin cell (Kumar IAEA-CN-164-3S03 dims)",
+  "pitch_cm": 3.0618621784789726,
+  "keff": [
+    1.5086321559898466,
+    0.001193699683695589
+  ],
+  "fuel_flux_tally": 7.745864866703895,
+  "sigma_b": {
+    "Th232_capture_b": 1.7262912738266432,
+    "Pa233_capture_b": 31.05051186756358,
+    "U233_fission_b": 105.26344502031665,
+    "U233_capture_b": 11.699926174740723,
+    "U235_fission_b": 93.13268198709966,
+    "U235_capture_b": 19.744725620786582,
+    "Pu239_fission_b": 234.3945267273797,
+    "Pu239_capture_b": 131.90070474308135
+  },
+  "endf_2200ms_reference_b": {
+    "Th232_capture_b": 7.335453000000001,
+    "Pa233_capture_b": 42.48736000000001,
+    "U233_fission_b": 533.9123,
+    "U233_capture_b": 42.32941,
+    "U235_fission_b": 586.4404,
+    "U235_capture_b": 99.34404000000002,
+    "Pu239_fission_b": 747.4621,
+    "Pu239_capture_b": 270.3972
+  }
+}

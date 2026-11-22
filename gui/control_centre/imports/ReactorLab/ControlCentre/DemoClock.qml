@@ -56,6 +56,15 @@ QtObject {
     property var scenarioIds: ["manual", "rod_step", "scram_xe", "doppler"]
     property var scenarioLabels: ["Manual", "Rod step", "Scram → Xe", "Doppler"]
     property string exportStatus: ""
+    property real betaEff: 0.0028
+    property real rhoDollars: 0
+    property real nPa233: 0
+    property real nU233: 0
+    property bool nuclearDataPlaceholders: true
+    property string placeholderNote: ""
+    property bool fuelCycleCoupling: false
+    property real rhoInventory: 0
+    property string timeMode: "transient"
     function setScenario(id) { scenarioName = id }
     function acknowledgeAlarms() { alarmUnacked = 0; masterAlarm = false }
     function exportCsv(path) { exportStatus = "demo skip: " + path }

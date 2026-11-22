@@ -12,15 +12,32 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-        height: Theme.bannerHeight
+        height: (shell.clock && shell.clock.nuclearDataPlaceholders) ? 44 : Theme.bannerHeight
         color: Theme.warn
         z: 20
-        Text {
+        Column {
             anchors.centerIn: parent
-            text: "EDUCATIONAL CONTROL CENTRE — not safety-grade · P=1 → 3000 MWₜₕ · UI-7 mimic/alarms/scenarios"
-            color: "#1a1200"
-            font.pixelSize: 12
-            font.weight: Font.DemiBold
+            width: parent.width - 16
+            spacing: 2
+            Text {
+                width: parent.width
+                horizontalAlignment: Text.AlignHCenter
+                text: "EDUCATIONAL CONTROL CENTRE — AHWR-style representative · not safety-grade · P=1 → 3000 MWₜₕ"
+                color: "#1a1200"
+                font.pixelSize: 12
+                font.weight: Font.DemiBold
+            }
+            Text {
+                width: parent.width
+                horizontalAlignment: Text.AlignHCenter
+                visible: shell.clock && shell.clock.nuclearDataPlaceholders
+                text: shell.clock && shell.clock.placeholderNote
+                      ? shell.clock.placeholderNote
+                      : "Unresolved nuclear-data markers active"
+                color: "#4a2000"
+                font.pixelSize: 11
+                font.weight: Font.DemiBold
+            }
         }
     }
 

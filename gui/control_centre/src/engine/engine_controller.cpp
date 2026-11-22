@@ -66,6 +66,15 @@ void EngineController::setScenario(const QString& id) {
   QMetaObject::invokeMethod(worker_, "setScenario", Qt::QueuedConnection, Q_ARG(QString, id));
 }
 
+void EngineController::setFuelCycleCoupling(bool enabled) {
+  QMetaObject::invokeMethod(worker_, "setFuelCycleCoupling", Qt::QueuedConnection,
+                            Q_ARG(bool, enabled));
+}
+
+void EngineController::setTimeMode(const QString& mode) {
+  QMetaObject::invokeMethod(worker_, "setTimeMode", Qt::QueuedConnection, Q_ARG(QString, mode));
+}
+
 void EngineController::acknowledgeAlarms() {
   QMetaObject::invokeMethod(worker_, "acknowledgeAlarms", Qt::QueuedConnection);
 }

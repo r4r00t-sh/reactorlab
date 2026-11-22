@@ -1,0 +1,53 @@
+# AHWR-style educational thorium-chain parameters.
+# DISCLAIMER: Representative educational model. Not BARC's licensed AHWR design.
+# Not for safety/licensing.
+#
+# One-group rates from OpenMC ENDF/B-VIII.0 collapse on an educational AHWR-style
+# pin cell (scripts/openmc/). Cross-check: data/thorium/openmc_collapse/CROSSCHECK.md
+
+name: ahwr_edu_chain_v1
+module: fuelcycle
+status: v1_1_coupled_ready
+has_placeholders: false
+
+decay:
+  # IAEA LiveChart / ENSDF
+  Th233_halflife_s: 1309.8   # 21.83 min
+  Pa233_halflife_s: 2331072.0  # 26.98 d * 86400
+  U233_halflife_s: 5.024e12  # ~1.592e5 y
+  U234_halflife_s: 7.747e12  # ~2.455e5 y
+  U235_halflife_s: 2.221e16  # ~7.04e8 y
+  U236_halflife_s: 7.391e14  # ~2.342e7 y
+
+neutronics:
+  phi0_n_cm2_s: 5.0e13  # educational operating flux scale (same convention as plant Xe)
+  # --- OpenMC-collapsed one-group microscopic cross sections [barn] ---
+  # Source: data/thorium/openmc_collapse/ahwr_edu_cell_onegroup.json (ENDF/B-VIII.0)
+  Th232_capture_b: 1.72629
+  Pa233_capture_b: 31.0505
+  U233_fission_b: 105.263
+  U233_capture_b: 11.6999
+  U235_fission_b: 93.1327
+  U235_capture_b: 19.7447
+  Pu239_fission_b: 234.395
+  Pu239_capture_b: 131.901
+  nu_U233: 2.52   # Keepin/CETR thermal context — see PROVENANCE
+  nu_U235: 2.43
+  nu_Pu239: 2.88
+
+initial_inventory_atoms_per_cm3:
+  # Educational seed: fertile Th + small U-233 / Pu-239 seed (not a licensed loading)
+  Th232: 1.0e22
+  Th233: 0.0
+  Pa233: 0.0
+  U233: 2.0e20
+  U234: 0.0
+  U235: 0.0
+  U236: 0.0
+  Pu239: 5.0e19
+
+literature_crosscheck_targets:
+  - citation: "Kumar et al., On the Physics Design of AHWR, IAEA-CN-164-3S03"
+  - citation: "IAEA TECDOC-1450, Thorium fuel cycle — Potential benefits and challenges"
+  - citation: "IAEA ARIS AHWR characteristics"
+  - note: "See data/thorium/openmc_collapse/CROSSCHECK.md for OpenMC vs ENDF 2200 m/s ratios"

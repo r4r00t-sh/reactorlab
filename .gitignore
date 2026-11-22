@@ -10,6 +10,9 @@ compile_commands.json
 /vcpkg_installed/
 /.vcpkg-root
 /vcpkg/
+/.tools/
+/data/thorium/openmc_collapse/work/
+/data/thorium/openmc_collapse/collapse_run.log
 
 # Python
 __pycache__/

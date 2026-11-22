@@ -80,6 +80,17 @@ class EngineController final : public QObject {
   Q_PROPERTY(QVariantList scenarioLabels READ scenarioLabels CONSTANT)
   Q_PROPERTY(QString exportStatus READ exportStatus NOTIFY exportStatusChanged)
 
+  Q_PROPERTY(double betaEff READ betaEff NOTIFY snapshotChanged)
+  Q_PROPERTY(double rhoDollars READ rhoDollars NOTIFY snapshotChanged)
+  Q_PROPERTY(double nPa233 READ nPa233 NOTIFY snapshotChanged)
+  Q_PROPERTY(double nU233 READ nU233 NOTIFY snapshotChanged)
+  Q_PROPERTY(bool nuclearDataPlaceholders READ nuclearDataPlaceholders NOTIFY snapshotChanged)
+  Q_PROPERTY(QString placeholderNote READ placeholderNote NOTIFY snapshotChanged)
+  Q_PROPERTY(bool fuelCycleCoupling READ fuelCycleCoupling WRITE setFuelCycleCoupling NOTIFY
+                 snapshotChanged)
+  Q_PROPERTY(double rhoInventory READ rhoInventory NOTIFY snapshotChanged)
+  Q_PROPERTY(QString timeMode READ timeMode WRITE setTimeMode NOTIFY snapshotChanged)
+
 public:
   explicit EngineController(QObject* parent = nullptr);
   ~EngineController() override;
@@ -102,7 +113,9 @@ public:
   [[nodiscard]] bool masterAlarm() const { return snap_.master_alarm; }
   [[nodiscard]] QString state() const { return snap_.state; }
   [[nodiscard]] QString scenarioName() const { return snap_.scenario; }
-  [[nodiscard]] QString reactorName() const { return QStringLiteral("ReactorLab · EDU-1"); }
+  [[nodiscard]] QString reactorName() const {
+    return QStringLiteral("ReactorLab · EDU-AHWR (representative)");
+  }
 
   [[nodiscard]] QVariantList trendT() const { return toVariant(trend_t_); }
   [[nodiscard]] QVariantList trendP() const { return toVariant(trend_P_); }
@@ -146,6 +159,16 @@ public:
   [[nodiscard]] QVariantList scenarioLabels() const;
   [[nodiscard]] QString exportStatus() const { return export_status_; }
 
+  [[nodiscard]] double betaEff() const { return snap_.beta_eff; }
+  [[nodiscard]] double rhoDollars() const { return snap_.rho_dollars; }
+  [[nodiscard]] double nPa233() const { return snap_.N_Pa233; }
+  [[nodiscard]] double nU233() const { return snap_.N_U233; }
+  [[nodiscard]] bool nuclearDataPlaceholders() const { return snap_.nuclear_data_placeholders; }
+  [[nodiscard]] QString placeholderNote() const { return snap_.placeholder_note; }
+  [[nodiscard]] bool fuelCycleCoupling() const { return snap_.fuel_cycle_coupling; }
+  [[nodiscard]] double rhoInventory() const { return snap_.rho_inventory; }
+  [[nodiscard]] QString timeMode() const { return snap_.time_mode; }
+
   /// Prefer mdotProxy for mimic UI (plant has no true ṁ).
   [[nodiscard]] double mdot() const { return snap_.mdot_proxy; }
 
@@ -159,6 +182,8 @@ public slots:
   void setSpeed(double speed);
   void setShieldCm(double cm);
   void setScenario(const QString& id);
+  void setFuelCycleCoupling(bool enabled);
+  void setTimeMode(const QString& mode);
   void acknowledgeAlarms();
   void exportCsv(const QString& path);
 

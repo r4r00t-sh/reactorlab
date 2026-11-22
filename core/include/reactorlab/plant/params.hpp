@@ -28,6 +28,9 @@ struct PlantParams {
   double alpha_M{-2.0e-5}; // 1/K
   double rod_worth{0.05};  // Δk/k at full insertion
 
+  /// Quasi-static fuel-cycle inventory bias (v1.1). Updated outside the ODE.
+  double rho_inventory{0.0}; // Δk/k
+
   double Tf0{900.0}; // K
   double Tc0{580.0}; // K
   double Tin{565.0}; // K

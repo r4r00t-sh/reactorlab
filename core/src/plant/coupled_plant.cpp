@@ -146,7 +146,7 @@ double total_reactivity(double t,
   const double z = std::clamp(rod(t), 0.0, 1.0);
   return critical_bias(params) + rho_ext(t) - params.rod_worth * z +
          params.alpha_D * (s.Tf - params.Tf0) + params.alpha_M * (s.Tc - params.Tc0) +
-         poison_rho_xe(s.X, params) + poison_rho_sm(s.Sm, params);
+         poison_rho_xe(s.X, params) + poison_rho_sm(s.Sm, params) + params.rho_inventory;
 }
 
 PlantState make_equilibrium_state(double P0, const PlantParams& params) {

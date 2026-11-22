@@ -1,7 +1,9 @@
 #include "engine/engine_worker.hpp"
 
 #include "reactorlab/diffusion/two_group.hpp"
+#include "reactorlab/fuelcycle/thorium_chain.hpp"
 #include "reactorlab/io/csv_export.hpp"
+#include "reactorlab/kinetics/delayed_groups.hpp"
 #include "reactorlab/kinetics/point_kinetics.hpp"
 #include "reactorlab/radiation/edu_dose.hpp"
 
@@ -42,6 +44,11 @@ struct AlarmDef {
 EngineWorker::EngineWorker(QObject* parent) : QObject(parent) {
   state_ = plant::make_equilibrium_state(1.0, params_);
   rad_inv_ = radiation::make_equilibrium_inventory(1.0);
+  chain_params_ = fuelcycle::ahwr_edu_v1_params();
+  chain_state_ = fuelcycle::ahwr_edu_v1_initial_state();
+  chain_ref_ = chain_state_;
+  // Primary Th-cycle delayed set when coupling off still reports U-233 β in snapshot
+  // via fission_shares; plant kinetics remain U-235 keepin until coupling enabled.
 }
 
 void EngineWorker::ensureFormFactorLocked() {
@@ -123,6 +130,30 @@ void EngineWorker::fillRadiationLocked(ReactorSnapshot& s) const {
     s.dose_neutron_uSvh[i] = curve[static_cast<std::size_t>(i)].H_neutron_uSvh;
   }
   s.rad_note = QStringLiteral("Educational estimates — not for safety or dose assessment.");
+}
+
+void EngineWorker::fillChainLocked(ReactorSnapshot& s) const {
+  s.N_Th232 = chain_state_.Th232;
+  s.N_Pa233 = chain_state_.Pa233;
+  s.N_U233 = chain_state_.U233;
+  s.N_Pu239 = chain_state_.Pu239;
+  const auto sh = fuelcycle::fission_shares(chain_state_, chain_params_, state_.P);
+  if (coupling_.enabled) {
+    s.beta_eff = params_.kinetics.beta();
+  } else {
+    s.beta_eff = sh.beta_eff > 0.0 ? sh.beta_eff : kinetics::u235_thermal_keepin().beta();
+  }
+  s.rho_dollars = kinetics::DelayedGroupData::dollars(s.rho, s.beta_eff);
+  s.rho_inventory = rho_inventory_;
+  s.fuel_cycle_coupling = coupling_.enabled;
+  s.time_mode = (coupling_.time_mode == fuelcycle::TimeMode::Depletion)
+                    ? QStringLiteral("depletion")
+                    : QStringLiteral("transient");
+  s.nuclear_data_placeholders = chain_params_.has_placeholders;
+  s.placeholder_note =
+      chain_params_.has_placeholders
+          ? QStringLiteral("Unresolved nuclear-data markers — not for validation")
+          : QString();
 }
 
 void EngineWorker::pushEventLocked(const QString& msg) {
@@ -234,6 +265,11 @@ void EngineWorker::start() {
     running_ = false;
     trends_ = {};
     rad_inv_ = radiation::make_equilibrium_inventory(1.0);
+    chain_state_ = fuelcycle::ahwr_edu_v1_initial_state();
+    chain_ref_ = chain_state_;
+    rho_inventory_ = 0.0;
+    params_.rho_inventory = 0.0;
+    coupling_accum_s_ = 0.0;
     alarm_active_.clear();
     alarm_unacked_.clear();
     event_log_.clear();
@@ -267,9 +303,44 @@ void EngineWorker::reset() {
   running_ = false;
   trends_ = {};
   rad_inv_ = radiation::make_equilibrium_inventory(1.0);
+  chain_state_ = fuelcycle::ahwr_edu_v1_initial_state();
+  chain_ref_ = chain_state_;
+  rho_inventory_ = 0.0;
+  params_.rho_inventory = 0.0;
+  coupling_accum_s_ = 0.0;
   alarm_active_.clear();
   alarm_unacked_.clear();
   pushEventLocked(QStringLiteral("Reset"));
+}
+
+void EngineWorker::setFuelCycleCoupling(bool enabled) {
+  std::lock_guard lock(mu_);
+  coupling_.enabled = enabled;
+  if (!enabled) {
+    rho_inventory_ = 0.0;
+    params_.rho_inventory = 0.0;
+    params_.kinetics = kinetics::u235_thermal_keepin();
+  } else {
+    chain_ref_ = chain_state_;
+    const auto out =
+        fuelcycle::evaluate_coupling(chain_state_, chain_ref_, chain_params_, state_.P);
+    rho_inventory_ = out.rho_inventory;
+    params_.rho_inventory = out.rho_inventory;
+    params_.kinetics = out.delayed;
+  }
+  pushEventLocked(enabled ? QStringLiteral("Fuel-cycle coupling ON")
+                          : QStringLiteral("Fuel-cycle coupling OFF"));
+}
+
+void EngineWorker::setTimeMode(const QString& mode) {
+  std::lock_guard lock(mu_);
+  if (mode == QLatin1String("depletion")) {
+    coupling_.time_mode = fuelcycle::TimeMode::Depletion;
+    pushEventLocked(QStringLiteral("Time mode · depletion"));
+  } else {
+    coupling_.time_mode = fuelcycle::TimeMode::Transient;
+    pushEventLocked(QStringLiteral("Time mode · transient"));
+  }
 }
 
 void EngineWorker::scram() {
@@ -338,6 +409,15 @@ void EngineWorker::setScenario(const QString& id) {
   running_ = false;
   trends_ = {};
   rad_inv_ = radiation::make_equilibrium_inventory(1.0);
+  chain_state_ = fuelcycle::ahwr_edu_v1_initial_state();
+  chain_ref_ = chain_state_;
+  rho_inventory_ = 0.0;
+  params_.rho_inventory = 0.0;
+  coupling_accum_s_ = 0.0;
+  if (coupling_.enabled) {
+    params_.kinetics = fuelcycle::evaluate_coupling(chain_state_, chain_ref_, chain_params_, 1.0)
+                           .delayed;
+  }
   alarm_active_.clear();
   alarm_unacked_.clear();
   pushEventLocked(QStringLiteral("Scenario → %1").arg(scenario_));
@@ -413,6 +493,7 @@ ReactorSnapshot EngineWorker::buildSnapshotLocked() {
   s.scenario = scenario_;
   fillMapsLocked(s);
   fillRadiationLocked(s);
+  fillChainLocked(s);
   evaluateAlarmsLocked(s.period_s);
   fillAlarmsAndLogsLocked(s);
   return s;
@@ -452,9 +533,30 @@ void EngineWorker::onTick() {
           const double step = std::min(left, 2.0);
           const double next_t = state_.t + step;
           const double z = rod_z_;
-          state_ = plant::advance(params_, kinetics::step_reactivity(rho_ext_),
-                                  [z](double) { return z; }, state_, next_t);
-          radiation::advance_inventory(rad_inv_, state_.P, step);
+          const bool depletion =
+              coupling_.time_mode == fuelcycle::TimeMode::Depletion;
+          if (!depletion) {
+            state_ = plant::advance(params_, kinetics::step_reactivity(rho_ext_),
+                                    [z](double) { return z; }, state_, next_t);
+            radiation::advance_inventory(rad_inv_, state_.P, step);
+            fuelcycle::advance_chain(chain_state_, chain_params_, state_.P, step);
+          } else {
+            // Depletion mode: advance chain on a stretched clock; freeze plant ODE.
+            state_.t = next_t;
+            const double chain_dt = step * coupling_.depletion_chain_dt_scale;
+            fuelcycle::advance_chain(chain_state_, chain_params_, state_.P, chain_dt);
+          }
+          if (coupling_.enabled) {
+            coupling_accum_s_ += step;
+            if (coupling_accum_s_ >= coupling_.update_period_s) {
+              coupling_accum_s_ = 0.0;
+              const auto out = fuelcycle::evaluate_coupling(
+                  chain_state_, chain_ref_, chain_params_, state_.P);
+              rho_inventory_ = out.rho_inventory;
+              params_.rho_inventory = out.rho_inventory;
+              params_.kinetics = out.delayed;
+            }
+          }
           left -= step;
           applyScenarioDriversLocked();
         }

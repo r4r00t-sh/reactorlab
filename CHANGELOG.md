@@ -2,6 +2,22 @@
 
 All notable changes to ReactorLab will be documented here.
 
+## [Unreleased] — Thorium / AHWR-edu fuel cycle
+
+### Added
+
+- Keepin U-233 thermal + Pu-239 fast delayed sets; fission-weighted β_eff and ρ_$
+- OpenMC ENDF/B-VIII.0 collapse of AHWR-style edu pin-cell one-group σ (`scripts/openmc/`)
+- Literature cross-check log (`data/thorium/openmc_collapse/CROSSCHECK.md`)
+- v1.1 quasi-static fuel-cycle coupling toggle (ρ_inventory + weighted delayed set)
+- Transient / depletion time modes in control centre transport bar
+- Coupled-vs-uncoupled and Pa→U-233 shutdown reactivity tests
+
+### Notes
+
+- PLACEHOLDER one-group σ removed; `REACTORLAB_RELEASE_BUILD` gate passes
+- OpenMC infinite-cell \(k\) and σ̄ are educational — not AHWR design validation
+
 ## [0.8.0] — QML control centre (UI-0…UI-7)
 
 ### Added

@@ -57,6 +57,19 @@ struct ReactorSnapshot {
   QVector<QString> event_log;         // newest last
   double mdot_proxy{2.9e4};           // educational kg/s (plant has no ṁ state)
   QString last_export{};
+
+  // Thorium-chain inventory (+ v1.1 quasi-static coupling fields)
+  double N_Th232{0.0};
+  double N_Pa233{0.0};
+  double N_U233{0.0};
+  double N_Pu239{0.0};
+  double beta_eff{0.0065};
+  double rho_dollars{0.0};
+  double rho_inventory{0.0};
+  bool fuel_cycle_coupling{false};
+  QString time_mode{QStringLiteral("transient")};
+  bool nuclear_data_placeholders{false};
+  QString placeholder_note{};
 };
 
 struct TrendBuffers {

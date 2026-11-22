@@ -2,6 +2,7 @@
 
 #include "engine/reactor_snapshot.hpp"
 
+#include "reactorlab/fuelcycle/thorium_chain.hpp"
 #include "reactorlab/plant/coupled_plant.hpp"
 #include "reactorlab/radiation/edu_dose.hpp"
 
@@ -37,6 +38,8 @@ public slots:
   void setDt(double dt_s);
   void setShieldCm(double cm);
   void setScenario(const QString& id);
+  void setFuelCycleCoupling(bool enabled);
+  void setTimeMode(const QString& mode);  // "transient" | "depletion"
   void acknowledgeAlarms();
   void exportCsv(const QString& path);
 
@@ -57,6 +60,7 @@ private:
   void ensureFormFactorLocked();
   void fillMapsLocked(ReactorSnapshot& s) const;
   void fillRadiationLocked(ReactorSnapshot& s) const;
+  void fillChainLocked(ReactorSnapshot& s) const;
   void fillAlarmsAndLogsLocked(ReactorSnapshot& s);
   void applyScenarioDriversLocked();
   void pushEventLocked(const QString& msg);
@@ -84,6 +88,13 @@ private:
 
   radiation::Inventory rad_inv_{};
   radiation::DoseParams rad_params_{};
+
+  fuelcycle::ChainParams chain_params_{fuelcycle::ahwr_edu_v1_params()};
+  fuelcycle::ChainState chain_state_{fuelcycle::ahwr_edu_v1_initial_state()};
+  fuelcycle::ChainState chain_ref_{fuelcycle::ahwr_edu_v1_initial_state()};
+  fuelcycle::CouplingSettings coupling_{};
+  double coupling_accum_s_{0.0};
+  double rho_inventory_{0.0};
 
   QSet<QString> alarm_active_;
   QSet<QString> alarm_unacked_;

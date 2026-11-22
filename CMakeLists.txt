@@ -12,6 +12,8 @@ option(REACTORLAB_BUILD_GUI "Build Qt 6 desktop application" ON)
 option(REACTORLAB_FETCH_DEPS "Fetch missing C++ deps with FetchContent" ON)
 option(REACTORLAB_ENABLE_SANITIZERS "Enable ASan/UBSan" OFF)
 option(REACTORLAB_ENABLE_WARNINGS "Enable strict warnings" ON)
+option(REACTORLAB_RELEASE_BUILD
+  "Fail configure if PLACEHOLDER nuclear data remain (release gate)" OFF)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -58,6 +60,20 @@ endif()
 
 include(ReactorLabPackaging)
 
+if(REACTORLAB_RELEASE_BUILD)
+  execute_process(
+    COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/scripts/check-no-placeholders.sh"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+    RESULT_VARIABLE _rl_ph_rc
+  )
+  if(NOT _rl_ph_rc EQUAL 0)
+    message(FATAL_ERROR
+      "REACTORLAB_RELEASE_BUILD=ON but PLACEHOLDER nuclear data remain. "
+      "Replace OpenMC-collapsed rates and clear flags before release.")
+  endif()
+endif()
+
 message(STATUS "ReactorLab ${PROJECT_VERSION}")
 message(STATUS "  tests=${REACTORLAB_BUILD_TESTS} bindings=${REACTORLAB_BUILD_BINDINGS} gui=${REACTORLAB_BUILD_GUI}")
 message(STATUS "  fetch_deps=${REACTORLAB_FETCH_DEPS} sanitizers=${REACTORLAB_ENABLE_SANITIZERS}")
+message(STATUS "  release_build=${REACTORLAB_RELEASE_BUILD}")
